@@ -25,9 +25,15 @@
           gtk3
           cairo
           pango
-          libsoup_3     # Часто нужен для Tauri webview
-          webkitgtk_4_1 # Обязательно для Tauri v2 на Linux
+          libsoup_3    
+          webkitgtk_4_1
           openssl
+          cmake
+          rustc
+          pkg-config
+          makeWrapper 
+          llvm
+          clang
         ];
 
         nativeBuildInputs = with pkgs; [
