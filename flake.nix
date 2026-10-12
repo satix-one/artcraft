@@ -34,6 +34,7 @@
           makeWrapper 
           llvm
           clang
+          ninja
         ];
 
         nativeBuildInputs = with pkgs; [
