@@ -109,6 +109,7 @@
               gdk-pixbuf
               libsoup_3
               openssl
+              webkitgtk_4_1
               udev
             ];
 
