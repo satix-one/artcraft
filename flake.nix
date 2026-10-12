@@ -34,10 +34,6 @@
             version = "0.7.0";
             src = ./.;
 
-            # Укажите правильный cargoLock, если у вас есть Cargo.lock,
-            # либо используйте vendorHash, если зависимости скачиваются через сети.
-            # Для начала можно попробовать закомментировать vendorHash, если Cargo.lock на месте,
-            # либо использовать lib.fakeHash для получения актуального хэша.
             cargoLock.lockFile = ./Cargo.lock;
 
             nativeBuildInputs = with pkgs; [
@@ -52,16 +48,17 @@
               vulkan-loader
               libxkbcommon
               wayland
-              xorg.libX11
-              xorg.libXcursor
-              xorg.libXi
-              xorg.libXrandr
+              libx11
+              libxcursor
+              libxi
+              libxrandr
               gtk3
               glib
               cairo
               pango
               atk
               gdk-pixbuf
+              libsoup_3
               openssl
               udev
             ];
@@ -69,7 +66,6 @@
             meta = {
               description = "Open Source Raster Graphics Editor written in Rust";
               homepage = "https://github.com/satix-one/artcraft";
-              license = pkgs.lib.licenses.mit; # поправьте, если другая лизензия
               platforms = supportedSystems;
             };
           };
@@ -101,16 +97,17 @@
               vulkan-loader
               libxkbcommon
               wayland
-              xorg.libX11
-              xorg.libXcursor
-              xorg.libXi
-              xorg.libXrandr
+              libx11
+              libxcursor
+              libxi
+              libxrandr
               gtk3
               glib
               cairo
               pango
               atk
               gdk-pixbuf
+              libsoup_3
               openssl
               udev
             ];
@@ -121,17 +118,16 @@
                 pkgs.vulkan-loader
                 pkgs.libxkbcommon
                 pkgs.wayland
-                pkgs.xorg.libX11
-                pkgs.xorg.libXcursor
-                pkgs.xorg.libXi
-                pkgs.xorg.libXrandr
+                pkgs.libx11
+                pkgs.libxcursor
+                pkgs.libxi
+                pkgs.libxrandr
                 pkgs.fontconfig
                 pkgs.freetype
+                pkgs.libsoup_3
               ]}:$LD_LIBRARY_PATH"
               
               echo "PhotoCraft Nix Environment Loaded 🚀"
-              rustc --version
-              cargo --version
             '';
           };
         });
