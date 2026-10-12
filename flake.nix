@@ -15,31 +15,36 @@
       forEachSystem = nixpkgs.lib.genAttrs supportedSystems;
     in
     {
-      devShells = forEachSystem (system:
+      packages = forEachSystem (system:
         let
           pkgs = import nixpkgs {
             inherit system;
             overlays = [ (import rust-overlay) ];
           };
 
-          # Используем стабильный Rust с поддержкой необходимых таргетов (включая WASM для веб-версии)
-          rustToolchain = pkgs.rust-bin.stable.latest.default.override {
-            extensions = [ "rust-src" "rustfmt" "clippy" ];
-            targets = [ "wasm32-unknown-unknown" ];
+          rustToolchain = pkgs.rust-bin.stable.latest.default;
+          rustPlatform = pkgs.makeRustPlatform {
+            cargo = rustToolchain;
+            rustc = rustToolchain;
           };
         in
         {
-          default = pkgs.mkShell {
-            buildInputs = with pkgs; [
-              # Компилятор и инструменты Rust
-              rustToolchain
-              pkg-config
-              
-              # Инструменты для сборки веб-версии (если используется Trunk)
-              trunk
-              wasm-bindgen-cli
+          default = rustPlatform.buildRustPackage {
+            pname = "photocraft";
+            version = "0.7.0";
+            src = ./.;
 
-              # Системные зависимости для графических библиотек и оконных менеджеров в Linux (Wayland / X11)
+            # Укажите правильный cargoLock, если у вас есть Cargo.lock,
+            # либо используйте vendorHash, если зависимости скачиваются через сети.
+            # Для начала можно попробовать закомментировать vendorHash, если Cargo.lock на месте,
+            # либо использовать lib.fakeHash для получения актуального хэша.
+            cargoLock.lockFile = ./Cargo.lock;
+
+            nativeBuildInputs = with pkgs; [
+              pkg-config
+            ];
+
+            buildInputs = with pkgs; [
               fontconfig
               freetype
               expat
@@ -51,21 +56,65 @@
               xorg.libXcursor
               xorg.libXi
               xorg.libXrandr
-              
-              # Графические библиотеки (GTK / GLib / Cairo / Pango часто требуются GUI-фреймворкам на Rust)
               gtk3
               glib
               cairo
               pango
               atk
               gdk-pixbuf
-
-              # Дополнительные системные утилиты
               openssl
               udev
             ];
 
-            # Переменные окружения для корректной работы компилятора и линковщика с графическими библиотеками
+            meta = {
+              description = "Open Source Raster Graphics Editor written in Rust";
+              homepage = "https://github.com/satix-one/artcraft";
+              license = pkgs.lib.licenses.mit; # поправьте, если другая лизензия
+              platforms = supportedSystems;
+            };
+          };
+        });
+
+      devShells = forEachSystem (system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [ (import rust-overlay) ];
+          };
+
+          rustToolchain = pkgs.rust-bin.stable.latest.default.override {
+            extensions = [ "rust-src" "rustfmt" "clippy" ];
+            targets = [ "wasm32-unknown-unknown" ];
+          };
+        in
+        {
+          default = pkgs.mkShell {
+            buildInputs = with pkgs; [
+              rustToolchain
+              pkg-config
+              trunk
+              wasm-bindgen-cli
+              fontconfig
+              freetype
+              expat
+              libglvnd
+              vulkan-loader
+              libxkbcommon
+              wayland
+              xorg.libX11
+              xorg.libXcursor
+              xorg.libXi
+              xorg.libXrandr
+              gtk3
+              glib
+              cairo
+              pango
+              atk
+              gdk-pixbuf
+              openssl
+              udev
+            ];
+
             shellHook = ''
               export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [
                 pkgs.libglvnd
