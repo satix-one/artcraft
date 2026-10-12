@@ -21,7 +21,8 @@
           xorg.libXi
           fontconfig
           freetype
-          glib  
+          glib
+          gtk3  
       ];
 
         nativeBuildInputs = with pkgs; [
