@@ -111,6 +111,7 @@
               openssl
               webkitgtk_4_1
               udev
+              cmake
             ];
 
             shellHook = ''
