@@ -1,5 +1,5 @@
 {
-  description = "ArtCraft / PhotoCraft - photo editor written in Rust";
+  description = "ArtCraft / PhotoCraft - photo editor written in Rust (Tauri workspace)";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -15,15 +15,20 @@
           libxkbcommon
           libGL
           wayland
-          xorg.libX11
-          xorg.libXcursor
-          xorg.libXrandr
-          xorg.libXi
+          libX11
+          libXcursor
+          libXrandr
+          libXi
           fontconfig
           freetype
           glib
-          gtk3  
-      ];
+          gtk3
+          cairo
+          pango
+          libsoup_3     # Часто нужен для Tauri webview
+          webkitgtk_4_1 # Обязательно для Tauri v2 на Linux
+          openssl
+        ];
 
         nativeBuildInputs = with pkgs; [
           cargo
@@ -35,7 +40,7 @@
       {
         packages.default = pkgs.rustPlatform.buildRustPackage {
           pname = "artcraft";
-          version = "0.1.0"; # подставьте нужную версию или берите из Cargo.toml
+          version = "0.1.0";
 
           src = ./.;
 
