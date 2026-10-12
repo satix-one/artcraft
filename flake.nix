@@ -21,7 +21,8 @@
           xorg.libXi
           fontconfig
           freetype
-        ];
+          glib  
+      ];
 
         nativeBuildInputs = with pkgs; [
           cargo
